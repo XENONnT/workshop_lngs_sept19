@@ -3,6 +3,8 @@
 Authors:
   * Mike Clark
   * Joran Angevaare
+  
+  
 Based on previous work of Tianyu and Jelle combination of:
   * https://github.com/XENONnT/WFSim/blob/master/notebooks/bias_smearing_demo.ipynb
   * https://github.com/XENON1T/XeAnalysisScripts/tree/master/PeakFinderTest
@@ -15,7 +17,7 @@ Based on previous work of Tianyu and Jelle combination of:
 **Usage**
   * The goal is to validate the peak classification by strax using the waveform simulator.
   * The main notebook is ``Peak_Classification_test.ipynb``
-  This notebook compares the input of the waveform simulator to the output of the waveform simulator. This can be used as a probe to test how well strax is performing at reconstructing and especially classifying peaks. In order so we check if the input peaks called the ''truth'' is compared to the ''data''. This shows that some of the peaks are at the moment split incorrectly but most are found in ''straxen''.
+  * This notebook compares the input of the waveform simulator to the output of the waveform simulator. This can be used as a probe to test how well strax is performing at reconstructing and especially classifying peaks. In order so we check if the input peaks called the ''truth'' is compared to the ''data''. This shows that some of the peaks are at the moment split incorrectly but most are found in ''straxen''.
   
 
 **Known issues**
