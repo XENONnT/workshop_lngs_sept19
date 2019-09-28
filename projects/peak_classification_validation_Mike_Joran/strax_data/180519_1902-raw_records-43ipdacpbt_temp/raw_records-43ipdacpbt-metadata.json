@@ -1,0 +1,102 @@
+{
+    "chunks": [
+        {
+            "chunk_i": 0,
+            "filename": "raw_records-43ipdacpbt-000000",
+            "filesize": 1028344,
+            "first_endtime": 25000110,
+            "first_time": 24999500,
+            "last_endtime": 975825370,
+            "last_time": 975825240,
+            "n": 12258,
+            "nbytes": 3076758
+        },
+        {
+            "chunk_i": 1,
+            "filename": "raw_records-43ipdacpbt-000001",
+            "filesize": 988077,
+            "first_endtime": 1025000090,
+            "first_time": 1024999500,
+            "last_endtime": 1975457770,
+            "last_time": 1975457760,
+            "n": 11440,
+            "nbytes": 2871440
+        },
+        {
+            "chunk_i": 2,
+            "filename": "raw_records-43ipdacpbt-000002",
+            "filesize": 1389931,
+            "first_endtime": 2025000090,
+            "first_time": 2024999500,
+            "last_endtime": 2975994970,
+            "last_time": 2975994700,
+            "n": 14461,
+            "nbytes": 3629711
+        },
+        {
+            "chunk_i": 3,
+            "filename": "raw_records-43ipdacpbt-000003",
+            "filesize": 1495328,
+            "first_endtime": 3025000110,
+            "first_time": 3024999500,
+            "last_endtime": 3975150290,
+            "last_time": 3975150020,
+            "n": 15627,
+            "nbytes": 3922377
+        },
+        {
+            "chunk_i": 4,
+            "filename": "raw_records-43ipdacpbt-000004",
+            "filesize": 1029753,
+            "first_endtime": 4025000090,
+            "first_time": 4024999500,
+            "last_endtime": 4975479410,
+            "last_time": 4975479280,
+            "n": 12585,
+            "nbytes": 3158835
+        },
+        {
+            "chunk_i": 5,
+            "filename": "raw_records-43ipdacpbt-000005",
+            "filesize": 1438227,
+            "first_endtime": 5025000090,
+            "first_time": 5024999500,
+            "last_endtime": 5975561090,
+            "last_time": 5975560980,
+            "n": 15606,
+            "nbytes": 3917106
+        },
+        {
+            "chunk_i": 6,
+            "filename": "raw_records-43ipdacpbt-000006",
+            "filesize": 1468485,
+            "first_endtime": 6025000170,
+            "first_time": 6024999500,
+            "last_endtime": 6975811130,
+            "last_time": 6975810740,
+            "n": 15943,
+            "nbytes": 4001693
+        }
+    ],
+    "compressor": "blosc",
+    "data_kind": "raw_records",
+    "data_type": "raw_records",
+    "dtype": "[(('Channel/PMT number', 'channel'), '<i2'), (('Time resolution in ns', 'dt'), '<i2'), (('Start time of the interval (ns since unix epoch)', 'time'), '<i8'), (('Length of the interval in samples', 'length'), '<i4'), (('Integral in ADC x samples', 'area'), '<i4'), (('Length of pulse to which the record belongs (without zero-padding)', 'pulse_length'), '<i4'), (('Fragment number in the pulse', 'record_i'), '<i2'), (('Baseline in ADC counts. data = int(baseline) - data_orig', 'baseline'), '<f4'), (('Level of data reduction applied (strax.ReductionLevel enum)', 'reduction_level'), '|u1'), (('Waveform data in ADC counts above baseline', 'data'), '<i2', (110,))]",
+    "lineage": {
+        "truth": [
+            "RawRecordsFromFax",
+            "0.0.0",
+            {
+                "fax_config": "https://raw.githubusercontent.com/XENONnT/strax_auxiliary_files/master/fax_files/fax_config.json",
+                "fax_file": "./test_uni.csv",
+                "samples_to_store_after": 20,
+                "samples_to_store_before": 2,
+                "zle_threshold": 0
+            }
+        ]
+    },
+    "lineage_hash": "43ipdacpbt",
+    "run_id": "180519_1902",
+    "strax_version": "0.8.0",
+    "writing_started": 1569666989.1863377
+}

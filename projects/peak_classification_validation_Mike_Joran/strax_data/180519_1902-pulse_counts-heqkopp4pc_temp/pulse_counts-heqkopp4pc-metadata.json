@@ -1,0 +1,148 @@
+{
+    "chunks": [
+        {
+            "chunk_i": 0,
+            "filename": "pulse_counts-heqkopp4pc-000000",
+            "filesize": 1406,
+            "first_endtime": 975825363,
+            "first_time": 24999500,
+            "last_endtime": 975825363,
+            "last_time": 24999500,
+            "n": 1,
+            "nbytes": 7952
+        },
+        {
+            "chunk_i": 1,
+            "filename": "pulse_counts-heqkopp4pc-000001",
+            "filesize": 1280,
+            "first_endtime": 1975457871,
+            "first_time": 1024999500,
+            "last_endtime": 1975457871,
+            "last_time": 1024999500,
+            "n": 1,
+            "nbytes": 7952
+        },
+        {
+            "chunk_i": 2,
+            "filename": "pulse_counts-heqkopp4pc-000002",
+            "filesize": 1358,
+            "first_endtime": 2975994837,
+            "first_time": 2024999500,
+            "last_endtime": 2975994837,
+            "last_time": 2024999500,
+            "n": 1,
+            "nbytes": 7952
+        },
+        {
+            "chunk_i": 3,
+            "filename": "pulse_counts-heqkopp4pc-000003",
+            "filesize": 1443,
+            "first_endtime": 3975150291,
+            "first_time": 3024999500,
+            "last_endtime": 3975150291,
+            "last_time": 3024999500,
+            "n": 1,
+            "nbytes": 7952
+        },
+        {
+            "chunk_i": 4,
+            "filename": "pulse_counts-heqkopp4pc-000004",
+            "filesize": 1353,
+            "first_endtime": 4975480173,
+            "first_time": 4024999500,
+            "last_endtime": 4975480173,
+            "last_time": 4024999500,
+            "n": 1,
+            "nbytes": 7952
+        },
+        {
+            "chunk_i": 5,
+            "filename": "pulse_counts-heqkopp4pc-000005",
+            "filesize": 1468,
+            "first_endtime": 5975561101,
+            "first_time": 5024999500,
+            "last_endtime": 5975561101,
+            "last_time": 5024999500,
+            "n": 1,
+            "nbytes": 7952
+        },
+        {
+            "chunk_i": 6,
+            "filename": "pulse_counts-heqkopp4pc-000006",
+            "filesize": 1456,
+            "first_endtime": 6975810889,
+            "first_time": 6024999500,
+            "last_endtime": 6975810889,
+            "last_time": 6024999500,
+            "n": 1,
+            "nbytes": 7952
+        }
+    ],
+    "compressor": "zstd",
+    "data_kind": "pulse_counts",
+    "data_type": "pulse_counts",
+    "dtype": "[(('Lowest start time observed in the chunk', 'time'), '<i8'), (('Highest endt ime observed in the chunk', 'endtime'), '<i8'), (('Number of pulses', 'pulse_count'), '<i8', (248,)), (('Number of lone pulses', 'lone_pulse_count'), '<i8', (248,)), (('Integral of all pulses in ADC_count x samples', 'pulse_area'), '<i8', (248,)), (('Integral of lone pulses in ADC_count x samples', 'lone_pulse_area'), '<i8', (248,))]",
+    "lineage": {
+        "pulse_counts": [
+            "PulseProcessing",
+            "0.0.2",
+            {
+                "hit_threshold": 15,
+                "pmt_pulse_filter": [
+                    0.012,
+                    -0.119,
+                    2.435,
+                    -1.271,
+                    0.357,
+                    -0.174,
+                    -0.0,
+                    -0.036,
+                    -0.028,
+                    -0.019,
+                    -0.025,
+                    -0.013,
+                    -0.03,
+                    -0.039,
+                    -0.005,
+                    -0.019,
+                    -0.012,
+                    -0.015,
+                    -0.029,
+                    0.024,
+                    -0.007,
+                    0.007,
+                    -0.001,
+                    0.005,
+                    -0.002,
+                    0.004,
+                    -0.002
+                ],
+                "save_outside_hits": [
+                    3,
+                    3
+                ],
+                "tail_veto_duration": 3000000,
+                "tail_veto_pass_extend": 3,
+                "tail_veto_pass_fraction": 0.05,
+                "tail_veto_resolution": 1000,
+                "tail_veto_threshold": 100000,
+                "to_pe_file": "https://raw.githubusercontent.com/XENONnT/strax_auxiliary_files/master/to_pe.npy"
+            }
+        ],
+        "truth": [
+            "RawRecordsFromFax",
+            "0.0.0",
+            {
+                "fax_config": "https://raw.githubusercontent.com/XENONnT/strax_auxiliary_files/master/fax_files/fax_config.json",
+                "fax_file": "./test_uni.csv",
+                "samples_to_store_after": 20,
+                "samples_to_store_before": 2,
+                "zle_threshold": 0
+            }
+        ]
+    },
+    "lineage_hash": "heqkopp4pc",
+    "run_id": "180519_1902",
+    "strax_version": "0.8.0",
+    "writing_started": 1569666989.208295
+}

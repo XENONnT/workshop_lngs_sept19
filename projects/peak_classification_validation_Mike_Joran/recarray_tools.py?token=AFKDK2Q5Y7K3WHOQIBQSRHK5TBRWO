@@ -12,7 +12,7 @@ def append_fields(base, names, data, dtypes=None, fill_value=-1,
     Does nothing if array already has fields with the same name.
     """
     if isinstance(names, (tuple, list)):
-        not_yet_in_data = True ^ np.in1d(names, base.keys().values)
+        not_yet_in_data = True ^ np.in1d(names, base.dtype.names)
         if dtypes is None:
             dtypes = [d.dtype for d in data]
         # Add multiple fields at once
