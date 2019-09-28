@@ -1,6 +1,6 @@
 # LNGS analysis workshop materials
 
-Please commit anything you think is useful!
+Please commit anything you think is useful!!!
 
   * **exercises**: Solutions by participants of the first-day exercises
   * **projects**: Subfolders with projects attempted during the workshop
