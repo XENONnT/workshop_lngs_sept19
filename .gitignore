@@ -1,3 +1,4 @@
 projects/peak_classification_validation_Mike_Joran/strax_data*
 *.pyc
+projects/peak_classification_validation_Mike_Joran/peak_classification/__pycache__/*
 projects/peak_classification_validation_Mike_Joran/resource_cache/
