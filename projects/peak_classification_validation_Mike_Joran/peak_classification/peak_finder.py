@@ -158,7 +158,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import beta
 from tqdm import tqdm
 
-import recarray_tools as rt
+# import recarray_tools as rt
 from multihist import Hist1d
 
 try:
