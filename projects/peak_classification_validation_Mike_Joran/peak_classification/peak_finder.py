@@ -8,8 +8,8 @@ from collections import OrderedDict
 rename_fields = recfunctions.rename_fields
 
 
-def append_fields(base, names, data, dtypes=None, fill_value=-1, 
-                  usemask=False,   # Different from recfunctions default
+def append_fields(base, names, data, dtypes=None, fill_value=-1,
+                  usemask=False,  # Different from recfunctions default
                   asrecarray=False):
     """Append fields to numpy structured array
     Does nothing if array already has fields with the same name.
@@ -19,18 +19,22 @@ def append_fields(base, names, data, dtypes=None, fill_value=-1,
         if dtypes is None:
             dtypes = [d.dtype for d in data]
         # Add multiple fields at once
-        return recfunctions.append_fields(base, 
-                                          np.array(names)[not_yet_in_data].tolist(), 
-                                          np.array(data)[not_yet_in_data].tolist(), 
-                                          np.array(dtypes)[not_yet_in_data].tolist(), 
-                                          fill_value, usemask, asrecarray)
+        return recfunctions.append_fields(
+            base,
+            np.array(names)[not_yet_in_data].tolist(),
+            np.array(data)[not_yet_in_data].tolist(),
+            np.array(dtypes)[not_yet_in_data].tolist(),
+            fill_value,
+            usemask,
+            asrecarray)
     else:
         # Add single field
         if names in base.dtype.names:
             return base
         else:
-            return recfunctions.append_fields(base, names, data, dtypes, 
-                                              fill_value, usemask, asrecarray)
+            return recfunctions.append_fields(
+                base, names, data, dtypes, fill_value, usemask, asrecarray)
+
 
 def drop_fields(arr, *args, **kwargs):
     """Drop fields from numpy structured array
@@ -57,12 +61,15 @@ def fields_view(arr, fields):
     # doesn't work in combination with filter_on_fields...
     # dtype2 = np.dtype({name:arr.dtype.fields[name] for name in columns})
     # return np.ndarray(arr.shape, dtype2, arr, 0, arr.strides)    
-    
-    
-def filter_on_fields(to_filter, for_filter, filter_fields, filter_fields_2=None, return_selection=False):
-    """Returns entries of to_filter whose combination of the filter_fields values are present in for_filter.
-    filter_fields_2: names of filter_fields in for_filter (if different than in to_filter)
-   If return_selection, will instead
+
+
+def filter_on_fields(to_filter, for_filter, filter_fields, filter_fields_2=None,
+                     return_selection=False):
+    """
+    Returns entries of to_filter whose combination of the filter_fields
+    values are present in for_filter. filter_fields_2: names of filter_fields in
+    for_filter (if different than in to_filter)
+    If return_selection, will instead
     """
     a = np.array(fields_view(to_filter, filter_fields))
     if filter_fields_2 is None:
@@ -71,19 +78,26 @@ def filter_on_fields(to_filter, for_filter, filter_fields, filter_fields_2=None,
     # Rename the fields, if needed
     # If only one field is selected, this won't be needed (and would return None instead of working)
     if not isinstance(filter_fields, str) and len(filter_fields) > 1:
-        b = recfunctions.rename_fields(b, dict(zip(filter_fields_2, filter_fields)))
+        b = recfunctions.rename_fields(b, dict(
+            zip(filter_fields_2, filter_fields)))
     selection = np.in1d(a, b)
     if return_selection:
         return selection
     else:
         return to_filter[selection]
 
+
 def group_by(x, group_by_fields='Event', return_group_indices=False):
-    """Splits x into LIST of arrays, each array with rows that have same group_by_fields values.
+    """
+    Splits x into LIST of arrays, each array with rows that have same
+    group_by_fields values.
     Gotchas:
-        Assumes x is sorted by group_by_fields (works in either order, reversed or not)
-        Does NOT put in empty lists if indices skip a value! (e.g. events without peaks)
-    If return_indices=True, returns list of arrays with indices of group elements in x instead
+        Assumes x is sorted by group_by_fields (works in either order, reversed
+        or not)
+        Does NOT put in empty lists if indices skip a value! (e.g. events
+        without peaks)
+    If return_indices=True, returns list of arrays with indices of group
+    elements in x instead
     """
 
     # Support single index and list of indices
@@ -106,18 +120,21 @@ def group_by(x, group_by_fields='Event', return_group_indices=False):
         return [to_return]
     else:
         # Split where indices change value
-        split_points = np.where((np.roll(indices, 1)!= indices))[0]
+        split_points = np.where((np.roll(indices, 1) != indices))[0]
         # 0 shouldn't be a split_point, will be in it due to roll (and indices[0] != indices[-1]), so remove it
         split_points = split_points[1:]
         return np.split(to_return, split_points)
-       
+
 
 def dict_group_by(x, group_by_fields='Event', return_group_indices=False):
-    """Same as group_by, but returns OrderedDict of value -> group, 
-    where value is the value (or tuple of values) of group_by_fields in each subgroup
+    """
+    Same as group_by, but returns OrderedDict of value -> group, where value is
+    the value (or tuple of values) of group_by_fields in each
+    subgroup
     """
     groups = group_by(x, group_by_fields, return_group_indices)
-    return OrderedDict([(fields_view(gr[0:1], group_by_fields)[0], gr) for gr in groups])
+    return OrderedDict(
+        [(fields_view(gr[0:1], group_by_fields)[0], gr) for gr in groups])
 
 
 def fields_data(arr, ignore_fields=None):
@@ -125,9 +142,6 @@ def fields_data(arr, ignore_fields=None):
         ignore_fields = []
     """Returns list of arrays of data for each single field in arr"""
     return [arr[fn] for fn in arr.dtype.names if fn not in ignore_fields]
-
-
-
 
 
 # %load match_peaks.py
@@ -146,6 +160,7 @@ from tqdm import tqdm
 
 import recarray_tools as rt
 from multihist import Hist1d
+
 try:
     from pax.datastructure import INT_NAN
 except ImportError:
@@ -154,52 +169,67 @@ except ImportError:
 
 def match_peaks(allpeaks1, allpeaks2, matching_fuzz=1, unknown_types=[0],
                 keep_tpc_only=True):
-    """Perform peak matching between two numpy record arrays with fields: Event, left, right, type, area
-    If a peak is split into many fragments (e.g. two close peaks split into three peaks),
-    the results are unreliable and depend on which peak set is peaks1 and which is peaks2.
+    """Perform peak matching between two numpy record arrays with fields: Event,
+     left, right, type, area
+    If a peak is split into many fragments (e.g. two close peaks split into
+    three peaks),
+    the results are unreliable and depend on which peak set is peaks1 and which
+    is peaks2.
 
-    Returns (allpeaks1, allpeaks2), each with three extra fields: id, outcome, matched_to
+    Returns (allpeaks1, allpeaks2), each with three extra fields: id, outcome,
+    matched_to
         id: unique number for each peak
         outcome: Can be one of:
-            found:  Peak was matched 1-1 between peaks1 and peaks2 (type agrees, no other peaks in range).
+            found:  Peak was matched 1-1 between peaks1 and peaks2 (type agrees,
+             no other peaks in range).
                     Note that area, widths, etc. can still be quite different!
             missed: Peak is not present in the other list
             misid_as_XX: Peak is present in the other list, but has type XX
-            merged: Peak is merged with another peak in the other list, the new 'super-peak' has the same type
+            merged: Peak is merged with another peak in the other list, the new
+            'super-peak' has the same type
             merged_to_XX: As above, but 'super-peak' has type XX
-            split: Peak is split in the other list, but more than one fragment has the same type as the parent.
-            chopped: As split, but one or several fragments are unclassified, exactly one has the correct type.
-            split_and_unclassified: As split, but all fragments are unclassified in the other list.
-            split_and_misid: As split, but at least one fragment has a different peak type.
-        matched_to: id of matching in peak in the other list if outcome is found or misid_as_XX, INT_NAN otherwise.
+            split: Peak is split in the other list, but more than one fragment
+            has the same type as the parent.
+            chopped: As split, but one or several fragments are unclassified,
+            exactly one has the correct type.
+            split_and_unclassified: As split, but all fragments are unclassified
+            in the other list.
+            split_and_misid: As split, but at least one fragment has a different
+            peak type.
+        matched_to: id of matching in peak in the other list if outcome is found
+        or misid_as_XX, INT_NAN otherwise.
     """
 
-#     # Keep only tpc_peaks
-#     if keep_tpc_only:
-#         if 'detector' in allpeaks1.dtype.names:
-#             allpeaks1 = allpeaks1[allpeaks1['detector'] == b'tpc']
-#         if 'detector' in allpeaks2.dtype.names:
-#             allpeaks2 = allpeaks2[allpeaks2['detector'] == b'tpc']
+    #     # Keep only tpc_peaks
+    #     if keep_tpc_only:
+    #         if 'detector' in allpeaks1.dtype.names:
+    #             allpeaks1 = allpeaks1[allpeaks1['detector'] == b'tpc']
+    #         if 'detector' in allpeaks2.dtype.names:
+    #             allpeaks2 = allpeaks2[allpeaks2['detector'] == b'tpc']
 
-#     # Remove true photoionization afterpulse peaks (they were not in initial instruction file)
-#     allpeaks1 = allpeaks1[allpeaks1['type'] != b'photoionization_afterpulse']
-#     allpeaks2 = allpeaks2[allpeaks2['type'] != b'photoionization_afterpulse']
+    #     # Remove true photoionization afterpulse peaks (they were not in initial instruction file)
+    #     allpeaks1 = allpeaks1[allpeaks1['type'] != b'photoionization_afterpulse']
+    #     allpeaks2 = allpeaks2[allpeaks2['type'] != b'photoionization_afterpulse']
 
     # Append id, outcome and matched_to fields
     print("\tAppending extra fields...\n")
     allpeaks1 = append_fields(allpeaks1,
-                                 ('id', 'outcome', 'matched_to'),
-                                 (np.arange(len(allpeaks1)),
-                                  np.array(['missed'] * len(allpeaks1), dtype='S32'),
-                                  INT_NAN * np.ones(len(allpeaks1), dtype=np.int64)))
+                              ('id', 'outcome', 'matched_to'),
+                              (np.arange(len(allpeaks1)),
+                               np.array(['missed'] * len(allpeaks1),
+                                        dtype='S32'),
+                               INT_NAN * np.ones(len(allpeaks1),
+                                                 dtype=np.int64)))
     allpeaks2 = append_fields(allpeaks2,
-                                 ('id', 'outcome', 'matched_to'),
-                                 (np.arange(len(allpeaks2)),
-                                 np.array(['missed'] * len(allpeaks2), dtype='S32'),
-                                 INT_NAN * np.ones(len(allpeaks2), dtype=np.int64)))
+                              ('id', 'outcome', 'matched_to'),
+                              (np.arange(len(allpeaks2)),
+                               np.array(['missed'] * len(allpeaks2),
+                                        dtype='S32'),
+                               INT_NAN * np.ones(len(allpeaks2),
+                                                 dtype=np.int64)))
     # Group each peak by event in OrderedDict
     print("\tGrouping peaks 1 by event...\n")
-    #print(allpeaks1)
+    # print(allpeaks1)
     peaks1_by_event = dict_group_by(allpeaks1, 'merge_index')
     print("\tGrouping peaks 2 by event...\n")
     peaks2_by_event = dict_group_by(allpeaks2, 'merge_index')
@@ -241,11 +271,13 @@ def match_peaks(allpeaks1, allpeaks2, matching_fuzz=1, unknown_types=[0],
                 matching_peaks[0] = p2
             else:
                 # More than one peak overlaps p1
-                handle_peak_merge(parent=p1, fragments=matching_peaks, unknown_types=unknown_types)
-                
+                handle_peak_merge(parent=p1, fragments=matching_peaks,
+                                  unknown_types=unknown_types)
+
             # matching_peaks is a copy, not a view, so we have to copy the results over to peaks_2 manually
             # Sometimes I wish python had references...
-            for i_in_matching_peaks, i_in_peaks_2 in enumerate(np.where(selection)[0]):
+            for i_in_matching_peaks, i_in_peaks_2 in enumerate(
+                    np.where(selection)[0]):
                 peaks_2[i_in_peaks_2] = matching_peaks[i_in_matching_peaks]
 
         # Match in reverse to detect merged peaks
@@ -254,14 +286,14 @@ def match_peaks(allpeaks1, allpeaks2, matching_fuzz=1, unknown_types=[0],
             selection = peaks_1['matched_to'] == p2['id']
             matching_peaks = peaks_1[selection]
             if len(matching_peaks) > 1:
-                handle_peak_merge(parent=p2, fragments=matching_peaks, unknown_types=unknown_types)
-                
+                handle_peak_merge(parent=p2, fragments=matching_peaks,
+                                  unknown_types=unknown_types)
+
             # matching_peaks is a copy, not a view, so we have to copy the results over to peaks_1 manually
             # Sometimes I wish python had references...
-            for i_in_matching_peaks, i_in_peaks_1 in enumerate(np.where(selection)[0]):
+            for i_in_matching_peaks, i_in_peaks_1 in enumerate(
+                    np.where(selection)[0]):
                 peaks_1[i_in_peaks_1] = matching_peaks[i_in_matching_peaks]
-                    
-
 
     # Concatenate peaks again into result list
     # Necessary because group_by (and np.split inside that) returns copies, not views
@@ -303,33 +335,34 @@ def handle_peak_merge(parent, fragments, unknown_types):
 
 
 outcome_colors = {
-    'found':            'darkblue',
-    'chopped':          'mediumslateblue',
+    'found': 'darkblue',
+    'chopped': 'mediumslateblue',
 
-    'missed':           'red',
-    'merged':           'turquoise',
-    'split':            'purple',
+    'missed': 'red',
+    'merged': 'turquoise',
+    'split': 'purple',
 
-    'misid_as_s2':      'orange',
-    'misid_as_s1':      'goldenrod',
-    'split_and_misid':  'darkorange',
-    'merged_to_s2':     'chocolate',
-    'merged_to_s1':     'sandybrown',
+    'misid_as_s2': 'orange',
+    'misid_as_s1': 'goldenrod',
+    'split_and_misid': 'darkorange',
+    'merged_to_s2': 'chocolate',
+    'merged_to_s1': 'sandybrown',
     'merged_to_unknown': 'khaki',
 
-    'unclassified':     'green',
-    'split_and_unclassified':     'seagreen',
-    'merged_and_unclassified':    'limegreen',
+    'unclassified': 'green',
+    'split_and_unclassified': 'seagreen',
+    'merged_and_unclassified': 'limegreen',
 }
-
 
 
 def peak_matching_histogram(results, histogram_key, bins=10):
     """Make 1D histogram of peak matching results (=peaks with extra fields added by matagainst histogram_key"""
 
     if histogram_key not in results.dtype.names:
-        raise ValueError('Histogram key %s should be one of the columns in results: %s' % (histogram_key,
-                                                                                           results.dtype.names))
+        raise ValueError(
+            'Histogram key %s should be one of the columns in results: %s' % (
+            histogram_key,
+            results.dtype.names))
 
     # How many true peaks do we have in each bin in total?
     n_peaks_hist = Hist1d(results[histogram_key], bins)
@@ -361,7 +394,7 @@ def _plot_peak_matching_histogram(hists):
         if outcome == '_total':
             continue
 
-        print("\t%0.2f%% %s" % (100 * hist.sum()/n_peaks_hist.n, outcome))
+        print("\t%0.2f%% %s" % (100 * hist.sum() / n_peaks_hist.n, outcome))
 
         # Compute Errors on estimate of a proportion
         # Should have vectorized this... lazy
@@ -369,7 +402,8 @@ def _plot_peak_matching_histogram(hists):
         limits_d = []
         limits_u = []
         for i, x in enumerate(hist):
-            limit_d, limit_u = binom_interval(x, total=n_peaks_hist.histogram[i])
+            limit_d, limit_u = binom_interval(x,
+                                              total=n_peaks_hist.histogram[i])
             limits_d.append(limit_d)
             limits_u.append(limit_u)
         limits_d = np.array(limits_d)
@@ -378,7 +412,7 @@ def _plot_peak_matching_histogram(hists):
         # Convert hist to proportion
         hist /= n_peaks_hist.histogram.astype('float')
 
-        color = outcome_colors.get(outcome, np.random.rand(3,))
+        color = outcome_colors.get(outcome, np.random.rand(3, ))
         plt.errorbar(x=n_peaks_hist.bin_centers,
                      y=hist,
                      yerr=[hist - limits_d, limits_u - hist],
@@ -417,4 +451,3 @@ def binom_interval(success, total, conf_level=0.95):
     if np.isnan(upper):
         upper = 1
     return lower, upper
-
