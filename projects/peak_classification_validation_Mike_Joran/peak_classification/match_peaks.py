@@ -108,17 +108,17 @@ def match_peaks(allpeaks1, allpeaks2, matching_fuzz=1, unknown_types=[0],
                 p1['matched_to'] = p2['id']
                 p2['matched_to'] = p1['id']
                 # Do the types match?
-                if p1['typeint'] == p2['typeint']:
+                if p1['type'] == p2['type']:
                     p1['outcome'] = p2['outcome'] = 'found'
                 else:
-                    if p1['typeint'] in unknown_types:
+                    if p1['type'] in unknown_types:
                         p2['outcome'] = 'unclassified'
                     else:
-                        p2['outcome'] = 'misid_as_s%s' % p1['typeint']
-                    if p2['typeint'] in unknown_types:
+                        p2['outcome'] = 'misid_as_s%s' % p1['type']
+                    if p2['type'] in unknown_types:
                         p1['outcome'] = 'unclassified'
                     else:
-                        p1['outcome'] = 'misid_as_s%s' % p2['typeint']
+                        p1['outcome'] = 'misid_as_s%s' % p2['type']
                     # If the peaks are unknown in both sets, they will count as 'found'.
                     # Hmm....
                 matching_peaks[0] = p2
@@ -155,17 +155,17 @@ def match_peaks(allpeaks1, allpeaks2, matching_fuzz=1, unknown_types=[0],
 
 
 def handle_peak_merge(parent, fragments, unknown_types):
-    found_types = fragments['typeint']
-    is_ok = found_types == parent['typeint']
+    found_types = fragments['type']
+    is_ok = found_types == parent['type']
     is_unknown = np.in1d(found_types, unknown_types)
     is_misclass = (True ^ is_ok) & (True ^ is_unknown)
     # We have to loop over the fragments to avoid making a copy
     for i in range(len(fragments)):
         if is_unknown[i] or is_misclass[i]:
-            if parent['typeint'] in unknown_types:
+            if parent['type'] in unknown_types:
                 fragments[i]['outcome'] = 'merged_to_unknown'
             else:
-                fragments[i]['outcome'] = 'merged_to_s%s' % parent['typeint']
+                fragments[i]['outcome'] = 'merged_to_s%s' % parent['type']
         else:
             fragments[i]['outcome'] = 'merged'
         # Link the fragments to the parent

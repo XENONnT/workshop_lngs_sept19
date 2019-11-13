@@ -1,6 +1,5 @@
 # %load recarray_tools.py
 import numpy as np
-import pandas as pd
 
 from numpy.lib import recfunctions
 from collections import OrderedDict
