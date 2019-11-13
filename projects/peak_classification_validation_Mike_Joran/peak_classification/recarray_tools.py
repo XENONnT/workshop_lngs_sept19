@@ -1,33 +1,39 @@
+# %load recarray_tools.py
 import numpy as np
+
 from numpy.lib import recfunctions
 from collections import OrderedDict
 
 rename_fields = recfunctions.rename_fields
 
 
-def append_fields(base, names, data, dtypes=None, fill_value=-1, 
-                  usemask=False,   # Different from recfunctions default
+def append_fields(base, names, data, dtypes=None, fill_value=-1,
+                  usemask=False,  # Different from recfunctions default
                   asrecarray=False):
     """Append fields to numpy structured array
     Does nothing if array already has fields with the same name.
     """
     if isinstance(names, (tuple, list)):
-        not_yet_in_data = True ^ np.in1d(names, base.keys().values)
+        not_yet_in_data = True ^ np.in1d(names, base.dtype.names)
         if dtypes is None:
             dtypes = [d.dtype for d in data]
         # Add multiple fields at once
-        return recfunctions.append_fields(base, 
-                                          np.array(names)[not_yet_in_data].tolist(), 
-                                          np.array(data)[not_yet_in_data].tolist(), 
-                                          np.array(dtypes)[not_yet_in_data].tolist(), 
-                                          fill_value, usemask, asrecarray)
+        return recfunctions.append_fields(
+            base,
+            np.array(names)[not_yet_in_data].tolist(),
+            np.array(data)[not_yet_in_data].tolist(),
+            np.array(dtypes)[not_yet_in_data].tolist(),
+            fill_value,
+            usemask,
+            asrecarray)
     else:
         # Add single field
         if names in base.dtype.names:
             return base
         else:
-            return recfunctions.append_fields(base, names, data, dtypes, 
-                                              fill_value, usemask, asrecarray)
+            return recfunctions.append_fields(
+                base, names, data, dtypes, fill_value, usemask, asrecarray)
+
 
 def drop_fields(arr, *args, **kwargs):
     """Drop fields from numpy structured array
@@ -54,12 +60,15 @@ def fields_view(arr, fields):
     # doesn't work in combination with filter_on_fields...
     # dtype2 = np.dtype({name:arr.dtype.fields[name] for name in columns})
     # return np.ndarray(arr.shape, dtype2, arr, 0, arr.strides)    
-    
-    
-def filter_on_fields(to_filter, for_filter, filter_fields, filter_fields_2=None, return_selection=False):
-    """Returns entries of to_filter whose combination of the filter_fields values are present in for_filter.
-    filter_fields_2: names of filter_fields in for_filter (if different than in to_filter)
-   If return_selection, will instead
+
+
+def filter_on_fields(to_filter, for_filter, filter_fields, filter_fields_2=None,
+                     return_selection=False):
+    """
+    Returns entries of to_filter whose combination of the filter_fields
+    values are present in for_filter. filter_fields_2: names of filter_fields in
+    for_filter (if different than in to_filter)
+    If return_selection, will instead
     """
     a = np.array(fields_view(to_filter, filter_fields))
     if filter_fields_2 is None:
@@ -68,19 +77,26 @@ def filter_on_fields(to_filter, for_filter, filter_fields, filter_fields_2=None,
     # Rename the fields, if needed
     # If only one field is selected, this won't be needed (and would return None instead of working)
     if not isinstance(filter_fields, str) and len(filter_fields) > 1:
-        b = recfunctions.rename_fields(b, dict(zip(filter_fields_2, filter_fields)))
+        b = recfunctions.rename_fields(b, dict(
+            zip(filter_fields_2, filter_fields)))
     selection = np.in1d(a, b)
     if return_selection:
         return selection
     else:
         return to_filter[selection]
 
+
 def group_by(x, group_by_fields='Event', return_group_indices=False):
-    """Splits x into LIST of arrays, each array with rows that have same group_by_fields values.
+    """
+    Splits x into LIST of arrays, each array with rows that have same
+    group_by_fields values.
     Gotchas:
-        Assumes x is sorted by group_by_fields (works in either order, reversed or not)
-        Does NOT put in empty lists if indices skip a value! (e.g. events without peaks)
-    If return_indices=True, returns list of arrays with indices of group elements in x instead
+        Assumes x is sorted by group_by_fields (works in either order, reversed
+        or not)
+        Does NOT put in empty lists if indices skip a value! (e.g. events
+        without peaks)
+    If return_indices=True, returns list of arrays with indices of group
+    elements in x instead
     """
 
     # Support single index and list of indices
@@ -103,18 +119,21 @@ def group_by(x, group_by_fields='Event', return_group_indices=False):
         return [to_return]
     else:
         # Split where indices change value
-        split_points = np.where((np.roll(indices, 1)!= indices))[0]
+        split_points = np.where((np.roll(indices, 1) != indices))[0]
         # 0 shouldn't be a split_point, will be in it due to roll (and indices[0] != indices[-1]), so remove it
         split_points = split_points[1:]
         return np.split(to_return, split_points)
-       
+
 
 def dict_group_by(x, group_by_fields='Event', return_group_indices=False):
-    """Same as group_by, but returns OrderedDict of value -> group, 
-    where value is the value (or tuple of values) of group_by_fields in each subgroup
+    """
+    Same as group_by, but returns OrderedDict of value -> group, where value is
+    the value (or tuple of values) of group_by_fields in each
+    subgroup
     """
     groups = group_by(x, group_by_fields, return_group_indices)
-    return OrderedDict([(fields_view(gr[0:1], group_by_fields)[0], gr) for gr in groups])
+    return OrderedDict(
+        [(fields_view(gr[0:1], group_by_fields)[0], gr) for gr in groups])
 
 
 def fields_data(arr, ignore_fields=None):
@@ -122,3 +141,5 @@ def fields_data(arr, ignore_fields=None):
         ignore_fields = []
     """Returns list of arrays of data for each single field in arr"""
     return [arr[fn] for fn in arr.dtype.names if fn not in ignore_fields]
+
+

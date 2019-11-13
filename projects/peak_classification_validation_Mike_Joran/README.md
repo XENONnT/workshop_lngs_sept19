@@ -1,13 +1,23 @@
 # Peak validation using the WFsim
+## Notebook is obsolete, please find the most recent notebooks here: 
+<https://github.com/XENONnT/analysiscode/tree/master/PeakFinderTest>
+
 
 Authors:
   * Mike Clark
   * Joran Angevaare
-  
-  
+ 
+ 
 Based on previous work of Tianyu and Jelle combination of:
   * https://github.com/XENONnT/WFSim/blob/master/notebooks/bias_smearing_demo.ipynb
   * https://github.com/XENON1T/XeAnalysisScripts/tree/master/PeakFinderTest
+
+
+**Last update:**
+
+
+2019/11/13
+
 
 **Perquisites**
   * https://github.com/XENONnT/straxen
